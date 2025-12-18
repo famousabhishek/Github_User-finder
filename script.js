@@ -32,7 +32,7 @@ async function fetchUser(username) {
     // for not disply first or not show any error
     profile.style.display = "none";
     error.style.display = "none";
-    usersuggestion.style.display = "none";
+    userSuggestion.style.display = "none";
     //only show this message loading
     loading.style.display = "block";
 
@@ -47,4 +47,57 @@ async function fetchUser(username) {
   } finally {
     loading.style.display = "none";
   }
+}
+
+// for showing user profile on user interface
+function showProfile(user) {
+  profile.style.display = "block";
+  avatar.src = user.avatar_url;
+  userName.textContent = user.name || user.login;
+  userbio.textContent = user.bio || "No bio available";
+  reposCount.textContent = user.public_repos;
+  followers.textContent = user.followers;
+  following.textContent = user.following;
+}
+
+async function fetchSimilarUsers(username) {
+  try {
+    const res = await fetch(
+      `https://api.github.com/search/users?q=${username}&per_page=6`
+    );
+    const data = await res.json();
+
+    suggestionList.innerHTML = "";
+
+    data.items.forEach((user) => {
+      const div = document.createElement("div");
+      div.className = "suggest-user";
+
+      div.innerHTML = `
+            <img src="${user.avatar_url}" />
+            <p>${user.login}</p>
+          `;
+
+      div.addEventListener("click", () => {
+        userInput.value = user.login;
+        fetchUser(user.login);
+      });
+
+      suggestionList.appendChild(div);
+    });
+
+    if (data.items.length) {
+      suggestions.style.display = "block";
+    }
+  } catch {}
+}
+
+searchBtn.addEventListener("click", search);
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") search();
+});
+
+function search() {
+  const username = userInput.value.trim();
+  if (username) fetchUser(username);
 }
