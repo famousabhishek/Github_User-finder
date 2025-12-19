@@ -1,43 +1,41 @@
-// for searching user
+// ===== DOM ELEMENTS =====
+
+// Search
 const userInput = document.getElementById("username");
 const searchBtn = document.getElementById("searchBtn");
 
-// for github user profile
+// Profile
 const profile = document.getElementById("profile");
 const avatar = document.getElementById("avatar");
 const userName = document.getElementById("name");
 const userBio = document.getElementById("bio");
 
-// for the show repos, followers and followings
+// Stats
 const reposCount = document.getElementById("repos");
 const followers = document.getElementById("followers");
 const following = document.getElementById("following");
 
-// for suggestion other github user
+// Suggestions
 const userSuggestion = document.getElementById("suggestions");
 const suggestionList = document.getElementById("suggestionList");
 
-// Showing message when user does not found
+// UI states
 const error = document.getElementById("error");
 const loading = document.getElementById("loading");
 
 // API
 const API = "https://api.github.com/users/";
 
-// async function for featching user information like profile
+// ===== FETCH USER =====
 async function fetchUser(username) {
-  // this will for some time API calls get fail like username can't find
-  // so we write the risky code inside try block
   try {
-    // for not disply first or not show any error
     profile.style.display = "none";
     error.style.display = "none";
     userSuggestion.style.display = "none";
-    //only show this message loading
     loading.style.display = "block";
 
     const res = await fetch(API + username);
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error("User not found");
 
     const user = await res.json();
     showProfile(user);
@@ -49,17 +47,18 @@ async function fetchUser(username) {
   }
 }
 
-// for showing user profile on user interface
+// ===== SHOW PROFILE =====
 function showProfile(user) {
   profile.style.display = "block";
   avatar.src = user.avatar_url;
   userName.textContent = user.name || user.login;
-  userbio.textContent = user.bio || "No bio available";
+  userBio.textContent = user.bio || "No bio available";
   reposCount.textContent = user.public_repos;
   followers.textContent = user.followers;
   following.textContent = user.following;
 }
 
+// ===== FETCH SIMILAR USERS =====
 async function fetchSimilarUsers(username) {
   try {
     const res = await fetch(
@@ -74,9 +73,9 @@ async function fetchSimilarUsers(username) {
       div.className = "suggest-user";
 
       div.innerHTML = `
-            <img src="${user.avatar_url}" />
-            <p>${user.login}</p>
-          `;
+        <img src="${user.avatar_url}" />
+        <p>${user.login}</p>
+      `;
 
       div.addEventListener("click", () => {
         userInput.value = user.login;
@@ -87,12 +86,14 @@ async function fetchSimilarUsers(username) {
     });
 
     if (data.items.length) {
-      suggestions.style.display = "block";
+      userSuggestion.style.display = "block";
     }
   } catch {}
 }
 
+// ===== EVENTS =====
 searchBtn.addEventListener("click", search);
+
 userInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") search();
 });
