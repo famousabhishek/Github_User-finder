@@ -1,33 +1,33 @@
-// ===== DOM ELEMENTS =====
-
-// Search
+// for searching user
 const userInput = document.getElementById("username");
 const searchBtn = document.getElementById("searchBtn");
 
-// Profile
+// for github user profile
 const profile = document.getElementById("profile");
 const avatar = document.getElementById("avatar");
 const userName = document.getElementById("name");
 const userBio = document.getElementById("bio");
 
-// Stats
+// for the show repos, followers and followings
 const reposCount = document.getElementById("repos");
 const followers = document.getElementById("followers");
 const following = document.getElementById("following");
 
-// Suggestions
+// for suggestion other github user
 const userSuggestion = document.getElementById("suggestions");
 const suggestionList = document.getElementById("suggestionList");
 
-// UI states
+// Showing message when user does not found
 const error = document.getElementById("error");
 const loading = document.getElementById("loading");
 
 // API
 const API = "https://api.github.com/users/";
 
-// ===== FETCH USER =====
+// async function for featching user information like
 async function fetchUser(username) {
+  // this will for some time API calls get fail like username can't find
+  // so we write the risky code inside try block
   try {
     profile.style.display = "none";
     error.style.display = "none";
